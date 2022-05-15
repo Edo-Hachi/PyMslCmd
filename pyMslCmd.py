@@ -19,6 +19,7 @@ class App:
 App()
 
 #----------------------------
+"""
 
 import random
 import math
@@ -290,15 +291,7 @@ class gamemain:
     #ゲームプレイ中のupdate処理
     ##-------------------------------------------------------------------------------
     def _update_play(self):
-        
-        """
-        #マウスLが押されたら弾丸発射
-        if pyxel.btnp(pyxel.MOUSE_LEFT_BUTTON) == True:
-            Bullet_list.append(
-                Bullet(120, 255, pyxel.mouse_x, pyxel.mouse_y, 5)
-            
-            )
-        """
+
         if pyxel.btnp(pyxel.KEY_Z) == True:
             if(self.bullet_a <= 0):return   #残弾数チェック
             Bullet_list.append(
