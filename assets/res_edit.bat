@@ -1,0 +1,2 @@
+pyxel edit ./defender.pyxres
+
