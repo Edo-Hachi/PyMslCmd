@@ -9,9 +9,8 @@ FPS=30
 class STATE(Enum):
     TITLE=0,
     PLAY=auto(),
-    GAMEMENU=auto()
-#GameState = STATE.TITLE
-
+    GAMEMENU=auto(),
+    QUIT=auto()
 
 
 
@@ -23,6 +22,8 @@ class GameMain:
     #--------------------------------------------------------------------------------
     def __init__(self):
         self.GameState = STATE.TITLE
+
+        self.QuitCount = 0
 
         pyxel.init(WIDTH, HEIGHT, title="PyMissleCommand",fps=FPS,quit_key=pyxel.KEY_NONE)
         #pyxel.image(0).load(0, 0, "assets/pyxel_logo_38x16.png")
@@ -37,6 +38,8 @@ class GameMain:
                 print ("Play")
             case STATE.GAMEMENU:
                 self.update_menu()
+            case STATE.QUIT:
+                self.update_quit()
             case _:
                 print("default")
 
@@ -55,6 +58,8 @@ class GameMain:
                 case STATE.GAMEMENU:
                     print ("GameMenu")
                     #self.draw_menu()
+                case STATE.QUIT:
+                    self.draw_quit()
                 case _:
                     print("default")
 #        pyxel.cls(0)
@@ -67,10 +72,11 @@ class GameMain:
         #print(STATE.TITLE)
 
         if pyxel.btnp(pyxel.KEY_Q):
+            self.QuitCount = 0
+            self.GameState = STATE.QUIT
             pyxel.cls(0)
-            pyxel.text(0,0,"Thank you to play!",7)
 
-            pyxel.quit()
+            #pyxel.quit()
 
     def draw_title(self):
         pyxel.cls(0)
@@ -88,6 +94,16 @@ class GameMain:
         pyxel.cls(0)
         pyxel.text(10,10,"Mene",1)
 
+    #--------------------------------------------------------------------------
+    def update_quit(self):
+        
+        if self.QuitCount < FPS*2:
+            self.QuitCount += 1
+        else:
+            pyxel.quit()
+
+    def draw_quit(self):
+            pyxel.text(0,0,"Thank you for playgame!",7)
 
 
 
