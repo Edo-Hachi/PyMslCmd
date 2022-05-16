@@ -1,7 +1,6 @@
 import pyxel
 from enum import Enum,auto
 
-
 WIDTH = 192
 HEIGHT = 256    
 FPS=30
@@ -13,29 +12,35 @@ class STATE(Enum):
     QUIT=auto()
 
 
-
 #ゲームメインクラス        
 class GameMain:
 
+
     #--------------------------------------------------------------------------------
-    #Pyxelイニシャライズ
+    #Pyxel initialize
     #--------------------------------------------------------------------------------
     def __init__(self):
         self.GameState = STATE.TITLE
 
         self.QuitCount = 0
 
+        
+
         pyxel.init(WIDTH, HEIGHT, title="PyMissleCommand",fps=FPS,quit_key=pyxel.KEY_NONE)
+        pyxel.load("./assets/pyMslCmd.pyxres")
         #pyxel.image(0).load(0, 0, "assets/pyxel_logo_38x16.png")
         pyxel.run(self.update, self.draw)
 
-
+    #--------------------------------------------------------------------------------
+    #Pyxel Update
+    #--------------------------------------------------------------------------------
     def update(self):
         match self.GameState:
             case STATE.TITLE:
                 self.update_title()
             case STATE.PLAY:
-                print ("Play")
+                self.update_play()
+                #print ("Play")
             case STATE.GAMEMENU:
                 self.update_menu()
             case STATE.QUIT:
@@ -43,30 +48,45 @@ class GameMain:
             case _:
                 print("default")
 
-
-
-
-        #if pyxel.btnp(pyxel.KEY_Q):
-        #    pyxel.quit()
-
+    #--------------------------------------------------------------------------------
+    #Pyxel Update
+    #--------------------------------------------------------------------------------
     def draw(self):
-            match self.GameState:
-                case STATE.TITLE:
-                     self.draw_title()
-                case STATE.PLAY:
-                    print ("Play")
-                case STATE.GAMEMENU:
-                    print ("GameMenu")
-                    #self.draw_menu()
-                case STATE.QUIT:
-                    self.draw_quit()
-                case _:
-                    print("default")
+        match self.GameState:
+            case STATE.TITLE:
+                self.draw_title()
+            case STATE.PLAY:
+                self.draw_play()
+                #print ("Play")
+            case STATE.GAMEMENU:
+                print ("GameMenu")
+                #self.draw_menu()
+            case STATE.QUIT:
+                self.draw_quit()
+            case _:
+                print("default")
 #        pyxel.cls(0)
         #pyxel.text(10, 10, "Missle Command for Pyxel", pyxel.frame_count % 16)
         #pyxel.blt(61, 66, 0, 0, 0, 38, 16)
 #        pyxel.line(0,0,WIDTH,HEIGHT,3)
-    
+
+    #--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    #update game play
+    def update_play(self):
+        mouse_x = pyxel.mouse_x
+        mouse_y = pyxel.mouse_y
+        #pyxel.mouse(True)
+        
+    #--------------------------------------------------------------------------
+    #draw game play
+    def draw_play(self):
+        pyxel.cls(0)
+        pyxel.pset(pyxel.mouse_x, pyxel.mouse_y,7)
+        pyxel .blt(pyxel.mouse_x, pyxel.mouse_y,0,0, 0, 16,16, 15)
+        #print(pyxel.MOUSE_POS_X)
+
+    #--------------------------------------------------------------------------
     #--------------------------------------------------------------------------
     def update_title(self):
         #print(STATE.TITLE)
@@ -75,8 +95,9 @@ class GameMain:
             self.QuitCount = 0
             self.GameState = STATE.QUIT
             pyxel.cls(0)
-
-            #pyxel.quit()
+        elif pyxel.btnp(pyxel.KEY_S):
+            self.GameState = STATE.PLAY
+            pyxel.cls(0)
 
     def draw_title(self):
         pyxel.cls(0)
@@ -95,6 +116,7 @@ class GameMain:
         pyxel.text(10,10,"Mene",1)
 
     #--------------------------------------------------------------------------
+    #Quit Sequence
     def update_quit(self):
         
         if self.QuitCount < FPS*2:
