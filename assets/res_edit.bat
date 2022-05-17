@@ -1,2 +1,1 @@
-pyxel edit ./defender.pyxres
-
+pyxel edit ./pyMslCmd.pyxres
