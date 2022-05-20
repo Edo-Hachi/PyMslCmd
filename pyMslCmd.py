@@ -82,8 +82,14 @@ class GameMain:
     #draw game play
     def draw_play(self):
         pyxel.cls(0)
-        pyxel.pset(pyxel.mouse_x, pyxel.mouse_y,7)
-        pyxel .blt(pyxel.mouse_x, pyxel.mouse_y,0,0, 0, 16,16, 15)
+        #pyxel.pset(pyxel.mouse_x, pyxel.mouse_y,7)
+        pyxel.blt(pyxel.mouse_x-8, pyxel.mouse_y-8,0,0, 0, 16,16, 15)
+
+        #pyxel.text(0,20, "pyxel.mouse_x",7)
+
+        pyxel.text(0, 10, str(pyxel.mouse_x) + ":" + str(pyxel.mouse_y), 2)
+        #pyxel.text(0, 20, str(pyxel.frame_count), 2)
+
         #print(pyxel.MOUSE_POS_X)
 
     #--------------------------------------------------------------------------
@@ -125,7 +131,9 @@ class GameMain:
             pyxel.quit()
 
     def draw_quit(self):
-            pyxel.text(0,0,"Thank you for playgame!",7)
+        #print(self.QuitCount)
+        pyxel.text(0,0, "Thank you Playgame!", 7)
+        #pyxel.text
 
 
 
