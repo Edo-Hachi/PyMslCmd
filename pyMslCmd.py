@@ -7,6 +7,9 @@ WIDTH = 192
 HEIGHT = 256    
 FPS=30
 
+#爆発のベース色
+EXPLODE_COL = 10
+
 class STATE(Enum):
     TITLE=0,
     PLAY=auto(),
@@ -82,15 +85,15 @@ class Bullet():
             if self.tx2 >= self.x_pos and self.y_pos <= self.ty2: 
                 
                 #爆風オブジェクト生成
-#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COLOR) #半径50 速度0.5
+#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
                 
                 #砲弾オブジェクト破棄           
                 self.alive = False
                 
         #誘爆判定
-        if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COLOR:
+        if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COL:
                 #爆風オブジェクト生成
-#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COLOR) #半径50 速度0.5
+#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
                 
                 #砲弾オブジェクト破棄           
                 self.alive = False        
