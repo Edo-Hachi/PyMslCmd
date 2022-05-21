@@ -5,7 +5,7 @@ from enum import Enum,auto
 
 WIDTH = 192
 HEIGHT = 256    
-FPS=30
+FPS=60
 
 #爆発のベース色
 EXPLODE_COL = 10
@@ -90,12 +90,16 @@ class Bullet():
         dist_y = ty - by
 
         #ターゲットまでの偏角計算
-        angle = math.atan2(dist_y, dist_x)
+        rag = math.atan2(dist_y, dist_x) #ラジアン角ね
+
+        print("angle:" + str(rag))
 
         #xy方向のfps毎の移動量計算
-        self.vx = math.cos(angle) * speed/2
-        self.vy = math.sin(angle) * speed/2
-        
+        self.vx = math.cos(rag) * speed
+        self.vy = math.sin(rag) * speed
+    
+        print ("cos:" + str(math.cos(30)))
+    
     def update(self):
         
         self.x_pos += self.vx
@@ -104,7 +108,6 @@ class Bullet():
     #    print("pos=" + str(self.x_pos) + ":" + str(self.y_pos))
     #    print("Target=" + str(self.tx) + ":" + str(self.ty))
         
-        #if self.tx == int(self.x_pos) and self.ty == int(self.y_pos):
         #弾着判定
         if self.tx1 <= self.x_pos and self.y_pos >= self.ty1:
             if self.tx2 >= self.x_pos and self.y_pos <= self.ty2: 
@@ -114,6 +117,7 @@ class Bullet():
                 
                 #砲弾オブジェクト破棄           
                 self.alive = False
+                print("Explode")
                 
         #誘爆判定
         #if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COL:
@@ -126,13 +130,13 @@ class Bullet():
         #画面外に出たらオブジェクト破棄
         if self.y_pos < 0 or HEIGHT < self.y_pos:
             self.alive = False
-            print("Erase")
+            print("Out of Screen 01")
         if self.x_pos < 0 or WIDTH < self.x_pos:
             self.alive = False
-            print("Erase")
+            print("Out of Screen 02")
     
     def draw(self):
-        pyxel.pset(self.x_pos, self.y_pos, 11)
+        pyxel.pset(self.x_pos, self.y_pos, 7)
         #pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
 
 
@@ -206,7 +210,7 @@ class GameMain:
         if pyxel.btnp(pyxel.KEY_Z) == True:
             #if(self.bullet_a <= 0):return   #残弾数チェック
             Bullet_list.append(
-                Bullet(128, 240, pyxel.mouse_x, pyxel.mouse_y, 6, 11)
+                Bullet(128, 240, pyxel.mouse_x, pyxel.mouse_y, 3, 11)
             )
             #self.bullet_a -= 1   
 
