@@ -10,6 +10,12 @@ FPS=30
 #爆発のベース色
 EXPLODE_COL = 10
 
+#オブジェクト管理リスト
+Bullet_list = []    #弾丸管理リスト
+
+#Explode_list = []   #爆風管理リスト
+#Missile_List = []    #ミサイル管理リスト
+
 class STATE(Enum):
     TITLE=0,
     PLAY=auto(),
@@ -42,6 +48,25 @@ class Reticle():
     def visible(self, visible):
         self.__visible = visible
 
+#リスト化されているオブジェクトの更新処理呼び出し
+def update_list(list):
+    for elem in list:
+        elem.update()
+
+#リスト化されているオブジェクトの描画処理呼び出し
+def draw_list(list):
+    for elem in list:
+        elem.draw()
+
+#リスト化されているオブジェクトで破棄されたモノのガベコレ
+def cleanup_list(list):
+    i = 0
+    while i < len(list):
+        elem = list[i]
+        if not elem.alive:
+            list.pop(i)
+        else:
+            i += 1
 
 #砲弾管理クラス        
 class Bullet():
@@ -83,7 +108,7 @@ class Bullet():
         #弾着判定
         if self.tx1 <= self.x_pos and self.y_pos >= self.ty1:
             if self.tx2 >= self.x_pos and self.y_pos <= self.ty2: 
-                
+                #pass
                 #爆風オブジェクト生成
 #                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
                 
@@ -91,22 +116,24 @@ class Bullet():
                 self.alive = False
                 
         #誘爆判定
-        if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COL:
+        #if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COL:
                 #爆風オブジェクト生成
 #                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
                 
                 #砲弾オブジェクト破棄           
-                self.alive = False        
+        #        self.alive = False        
         
         #画面外に出たらオブジェクト破棄
         if self.y_pos < 0 or HEIGHT < self.y_pos:
             self.alive = False
+            print("Erase")
         if self.x_pos < 0 or WIDTH < self.x_pos:
             self.alive = False
+            print("Erase")
     
     def draw(self):
-        #pyxel.pset(self.x_pos, self.y_pos, 11)
-        pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
+        pyxel.pset(self.x_pos, self.y_pos, 11)
+        #pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
 
 
 #ゲームメインクラス        
@@ -175,6 +202,20 @@ class GameMain:
         mouse_x = pyxel.mouse_x
         mouse_y = pyxel.mouse_y
         #pyxel.mouse(True)
+
+        if pyxel.btnp(pyxel.KEY_Z) == True:
+            #if(self.bullet_a <= 0):return   #残弾数チェック
+            Bullet_list.append(
+                Bullet(128, 240, pyxel.mouse_x, pyxel.mouse_y, 6, 11)
+            )
+            #self.bullet_a -= 1   
+
+        #リスト化されたオブジェクトの更新処理だよ
+        update_list(Bullet_list)
+
+        #削除フラグ立ってるオブジェクトを消すよ
+        cleanup_list(Bullet_list)
+     
         
     #--------------------------------------------------------------------------
     #draw game play
@@ -190,6 +231,10 @@ class GameMain:
         #pyxel.text(0, 20, str(pyxel.frame_count), 2)
 
         #print(pyxel.MOUSE_POS_X)
+
+        #リスト化されたオブジェクトの描画処理
+        draw_list(Bullet_list)    
+
 
     #--------------------------------------------------------------------------
     #--------------------------------------------------------------------------
