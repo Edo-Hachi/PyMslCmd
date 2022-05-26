@@ -21,7 +21,7 @@ class STATE(Enum):
     PLAY=auto(),
     GAMEMENU=auto(),
     QUIT=auto()
-
+#------------------------------------------------------------------------------
 #レティクル管理クラス
 class Reticle():
     def __init__(self, x, y):
@@ -48,26 +48,17 @@ class Reticle():
     def visible(self, visible):
         self.__visible = visible
 
-#リスト化されているオブジェクトの更新処理呼び出し
-def update_list(list):
-    for elem in list:
-        elem.update()
+#------------------------------------------------------------------------------
+#砲弾管理クラス        
+class Explode():
+    def __init__(self, ex, ey, rad, col1, col2):
+        self.x = ex
+        self.y = ey
+        self.rad = rad
+        self.col1 = col1
+        self.col2 = col2
 
-#リスト化されているオブジェクトの描画処理呼び出し
-def draw_list(list):
-    for elem in list:
-        elem.draw()
-
-#リスト化されているオブジェクトで破棄されたモノのガベコレ
-def cleanup_list(list):
-    i = 0
-    while i < len(list):
-        elem = list[i]
-        if not elem.alive:
-            list.pop(i)
-        else:
-            i += 1
-
+#------------------------------------------------------------------------------
 #砲弾管理クラス        
 class Bullet():
     def __init__(self, bx, by, tx, ty, speed, col):
@@ -139,6 +130,25 @@ class Bullet():
         pyxel.pset(self.x_pos, self.y_pos, 7)
         #pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
 
+#リスト化されているオブジェクトの更新処理呼び出し
+def update_list(list):
+    for elem in list:
+        elem.update()
+
+#リスト化されているオブジェクトの描画処理呼び出し
+def draw_list(list):
+    for elem in list:
+        elem.draw()
+
+#リスト化されているオブジェクトで破棄されたモノのガベコレ
+def cleanup_list(list):
+    i = 0
+    while i < len(list):
+        elem = list[i]
+        if not elem.alive:
+            list.pop(i)
+        else:
+            i += 1
 
 #ゲームメインクラス        
 class GameMain:
