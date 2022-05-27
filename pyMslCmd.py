@@ -12,8 +12,8 @@ EXPLODE_COL = 10
 
 #オブジェクト管理リスト
 Bullet_list = []    #弾丸管理リスト
+Explode_list = []   #爆風管理リスト
 
-#Explode_list = []   #爆風管理リスト
 #Missile_List = []    #ミサイル管理リスト
 
 class STATE(Enum):
@@ -49,14 +49,34 @@ class Reticle():
         self.__visible = visible
 
 #------------------------------------------------------------------------------
-#砲弾管理クラス        
+#爆風管理クラス        
 class Explode():
-    def __init__(self, ex, ey, rad, col1, col2):
+    def __init__(self, ex, ey, maxr, spd, col1, col2):
         self.x = ex
         self.y = ey
-        self.rad = rad
+        self.max_radius = maxr
+        self.radius = 1
+        self.speed = spd
         self.col1 = col1
         self.col2 = col2
+        self.alive = True
+        
+        Explode_list.append(self)
+
+    def update(self):
+        self.radius += self.speed
+        
+        if self.radius >= self.max_radius:
+            self.alive = False
+    
+    def draw(self):
+        if self.radius % 5:
+            #pyxel.circ(self.x, self.y, self.radius, self.col1)
+            pyxel.circ(self.x, self.y, self.radius, 10)
+        else:
+            pyxel.circ(self.x, self.y, self.radius, 7)
+        
+        pyxel.circb(self.x, self.y, self.radius, 8)
 
 #------------------------------------------------------------------------------
 #砲弾管理クラス        
@@ -102,9 +122,9 @@ class Bullet():
         #弾着判定
         if self.tx1 <= self.x_pos and self.y_pos >= self.ty1:
             if self.tx2 >= self.x_pos and self.y_pos <= self.ty2: 
-                #pass
                 #爆風オブジェクト生成
-#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
+                #Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
+                Explode(self.x_pos, self.y_pos, 40, 0.5, 10,8)
                 
                 #砲弾オブジェクト破棄           
                 self.alive = False
@@ -226,9 +246,11 @@ class GameMain:
 
         #リスト化されたオブジェクトの更新処理だよ
         update_list(Bullet_list)
+        update_list(Explode_list)
 
         #削除フラグ立ってるオブジェクトを消すよ
         cleanup_list(Bullet_list)
+        cleanup_list(Explode_list)
      
         
     #--------------------------------------------------------------------------
@@ -248,6 +270,7 @@ class GameMain:
 
         #リスト化されたオブジェクトの描画処理
         draw_list(Bullet_list)    
+        draw_list(Explode_list)    
 
 
     #--------------------------------------------------------------------------
