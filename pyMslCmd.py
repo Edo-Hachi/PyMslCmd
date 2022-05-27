@@ -8,13 +8,20 @@ HEIGHT = 256
 FPS=60
 
 #爆発のベース色
-EXPLODE_COL = 10
+COL_EXP1=10
+COL_EXP2=5
+COL_EXP3=8  #外周
+
+COL_MEXP1=11
+COL_MEXP2=14
+COL_MSL=6
+
+MISSILE_SPEED=0.5
 
 #オブジェクト管理リスト
 Bullet_list = []    #弾丸管理リスト
 Explode_list = []   #爆風管理リスト
-
-#Missile_List = []    #ミサイル管理リスト
+Missile_list = []    #ミサイル管理リスト
 
 class STATE(Enum):
     TITLE=0,
@@ -70,13 +77,15 @@ class Explode():
             self.alive = False
     
     def draw(self):
-        if self.radius % 5:
-            #pyxel.circ(self.x, self.y, self.radius, self.col1)
-            pyxel.circ(self.x, self.y, self.radius, 10)
+        if self.radius % 10:
+            pyxel.circ(self.x, self.y, self.radius, self.col1)
         else:
-            pyxel.circ(self.x, self.y, self.radius, 7)
+            pyxel.circ(self.x, self.y, self.radius, self.col2)
         
-        pyxel.circb(self.x, self.y, self.radius, 8)
+        pyxel.circb(self.x, self.y, self.radius, COL_EXP3)
+
+
+
 
 #------------------------------------------------------------------------------
 #砲弾管理クラス        
@@ -103,52 +112,55 @@ class Bullet():
         #ターゲットまでの偏角計算
         rag = math.atan2(dist_y, dist_x) #ラジアン角ね
 
-        print("angle:" + str(rag))
+        #print("angle:" + str(rag))
 
         #xy方向のfps毎の移動量計算
         self.vx = math.cos(rag) * speed
         self.vy = math.sin(rag) * speed
     
-        print ("cos:" + str(math.cos(30)))
+        #print ("cos:" + str(math.cos(30)))
     
     def update(self):
         
         self.x_pos += self.vx
         self.y_pos += self.vy
         
-    #    print("pos=" + str(self.x_pos) + ":" + str(self.y_pos))
-    #    print("Target=" + str(self.tx) + ":" + str(self.ty))
-        
         #弾着判定
         if self.tx1 <= self.x_pos and self.y_pos >= self.ty1:
             if self.tx2 >= self.x_pos and self.y_pos <= self.ty2: 
                 #爆風オブジェクト生成
-                #Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
-                Explode(self.x_pos, self.y_pos, 40, 0.5, 10,8)
+                Explode(self.x_pos, self.y_pos, 40, 0.3, COL_EXP1, COL_EXP2) 
                 
                 #砲弾オブジェクト破棄           
                 self.alive = False
-                print("Explode")
+                #print("Explode")
                 
         #誘爆判定
-        #if pyxel.pget(self.x_pos, self.y_pos) == EXPLODE_COL:
+        if pyxel.pget(self.x_pos, self.y_pos) == COL_EXP1 or pyxel.pget(self.x_pos, self.y_pos) == COL_EXP2:
                 #爆風オブジェクト生成
-#                Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
+                #Explode(self.x_pos, self.y_pos, 50, 0.5, 1, EXPLODE_COL) #半径50 速度0.5
+                Explode(self.x_pos, self.y_pos, 40, 0.3, COL_EXP1, COL_EXP2) 
                 
                 #砲弾オブジェクト破棄           
-        #        self.alive = False        
+                self.alive = False        
         
         #画面外に出たらオブジェクト破棄
         if self.y_pos < 0 or HEIGHT < self.y_pos:
             self.alive = False
-            print("Out of Screen 01")
+            #print("Out of Screen 01")
         if self.x_pos < 0 or WIDTH < self.x_pos:
             self.alive = False
-            print("Out of Screen 02")
+            #print("Out of Screen 02")
     
     def draw(self):
         pyxel.pset(self.x_pos, self.y_pos, 7)
         #pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
+
+#ミサイル管理クラス(砲弾クラス継承)
+class Missile(Bullet):
+    def draw(self):
+        pyxel.rect(self.x_pos - 1, self.y_pos - 1, 2, 2, self.color)
+        pyxel.line(self.start_x, self.start_y, self.x_pos, self.y_pos, self.color)
 
 #リスト化されているオブジェクトの更新処理呼び出し
 def update_list(list):
@@ -240,17 +252,28 @@ class GameMain:
         if pyxel.btnp(pyxel.KEY_Z) == True:
             #if(self.bullet_a <= 0):return   #残弾数チェック
             Bullet_list.append(
-                Bullet(128, 240, pyxel.mouse_x, pyxel.mouse_y, 3, 11)
+                Bullet(128, 240, pyxel.mouse_x, pyxel.mouse_y, 2, 11)
             )
             #self.bullet_a -= 1   
+
+        #Debug 2秒毎にミサイル発生 hoge
+        if pyxel.frame_count % 120 == 0:
+            msl_sx = random.randint(1, WIDTH)   #ミサイル発生時のX座標
+            msl_ex = random.randint(1, WIDTH)   #ミサイル着弾目標地点のX座標
+                        
+            Missile_list.append(
+                Missile(msl_sx, 0, msl_ex, HEIGHT, MISSILE_SPEED, COL_MSL)
+            ) 
 
         #リスト化されたオブジェクトの更新処理だよ
         update_list(Bullet_list)
         update_list(Explode_list)
+        update_list(Missile_list)
 
         #削除フラグ立ってるオブジェクトを消すよ
         cleanup_list(Bullet_list)
         cleanup_list(Explode_list)
+        cleanup_list(Missile_list)
      
         
     #--------------------------------------------------------------------------
@@ -263,7 +286,7 @@ class GameMain:
 
         #pyxel.text(0,20, "pyxel.mouse_x",7)
 
-        pyxel.text(0, 10, str(pyxel.mouse_x) + ":" + str(pyxel.mouse_y), 2)
+        #pyxel.text(0, 10, str(pyxel.mouse_x) + ":" + str(pyxel.mouse_y), 2)
         #pyxel.text(0, 20, str(pyxel.frame_count), 2)
 
         #print(pyxel.MOUSE_POS_X)
@@ -271,6 +294,7 @@ class GameMain:
         #リスト化されたオブジェクトの描画処理
         draw_list(Bullet_list)    
         draw_list(Explode_list)    
+        draw_list(Missile_list)    
 
 
     #--------------------------------------------------------------------------
