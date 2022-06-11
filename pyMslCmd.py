@@ -12,8 +12,7 @@ COL_EXP1=10
 COL_EXP2=5
 COL_EXP3=8  #外周
 
-COL_MEXP1=11
-COL_MEXP2=14
+#ミサイル色
 COL_MSL=6
 
 MISSILE_SPEED=0.5
@@ -314,10 +313,16 @@ class GameMain:
 
     def draw_title(self):
         pyxel.cls(0)
-        pyxel.text(10,10,"Missle Command",1)
+        #pyxel.text(10,10,"Missle Command",1)
 
-        pyxel.text(10,16,"S:Game Start",7)
-        pyxel.text(10,32,"Q:Quit",7)
+        pyxel.text(10,64+16*4,"S:Game Start",7)
+        pyxel.text(10,64+16*6,"Q:Quit",7)
+
+        #pyxel.blt(50, 50, 0, 16, 0,16,16,15)
+        #pyxel.blt(70, 50, 0, 16, 0,16,16,15)
+
+        pyxel.blt(16,64, 1, 0,0, 160,32, 15)
+
 
     #--------------------------------------------------------------------------
     def update_menu(self):
@@ -341,9 +346,5 @@ class GameMain:
         #print(self.QuitCount)
         pyxel.text(0,0, "Thank you Playgame!", 7)
         #pyxel.text
-
-
-
-
 
 GameMain()
